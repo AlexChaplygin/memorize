@@ -57,6 +57,14 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:src="@drawable/icon_backspace"
                 app:backgroundTint="#00D1D1C8" />
+
+            <ImageButton
+                android:id="@+id/word_to_check_help_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:src="@drawable/help"
+                app:backgroundTint="#00D1D1C8" />
         </LinearLayout>
 
         <LinearLayout

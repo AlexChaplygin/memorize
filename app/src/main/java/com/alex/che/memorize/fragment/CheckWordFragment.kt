@@ -60,10 +60,26 @@ class CheckWordFragment : Fragment() {
             memorizeDatabase.wordDao.changeIsDifficult(word!!.id, isChecked)
         }
 
-        val wordBoBheckBacktrackBtn: ImageButton =
+        val wordToCheckBacktrackBtn: ImageButton =
             checkWordFragmentView.findViewById(R.id.word_to_check_backtrack_btn)!!
-        wordBoBheckBacktrackBtn.setOnClickListener {
+        wordToCheckBacktrackBtn.setOnClickListener {
             wordToCheckEt.setText(wordToCheckEt.text.toString().dropLast(1))
+        }
+
+        val wordToCheckHelpBtn: ImageButton =
+            checkWordFragmentView.findViewById(R.id.word_to_check_help_btn)!!
+        wordToCheckHelpBtn.setOnClickListener {
+            if (wordToCheckEt.text.toString().isEmpty()) {
+                wordToCheckEt.append(word!!.word[0].toString())
+            } else {
+                val currText = wordToCheckEt.text.toString()
+                loop@ for (i in 0..<word!!.word.length) {
+                    if (i >= currText.length || word!!.word[i] != currText[i]) {
+                        wordToCheckEt.setText(word!!.word.subSequence(0, i + 1))
+                        break@loop
+                    }
+                }
+            }
         }
 
         val checkWordBtn: Button = checkWordFragmentView.findViewById(R.id.check_word_btn)!!
@@ -81,7 +97,12 @@ class CheckWordFragment : Fragment() {
                 }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -111,7 +132,8 @@ class CheckWordFragment : Fragment() {
     }
 
     private fun putHints(checkWordFragmentView: View) {
-        val wordToCheckEt: EditText = checkWordFragmentView.findViewById(R.id.word_to_check_et)!!
+        val wordToCheckEt: EditText =
+            checkWordFragmentView.findViewById(R.id.word_to_check_et)!!
         val charsLayout: LinearLayout = checkWordFragmentView.findViewById(R.id.chars_layout)!!
         val context = checkWordFragmentView.context
         val wordCharArray = word!!.word.toCharArray().distinct().toCharArray()
@@ -153,8 +175,6 @@ class CheckWordFragment : Fragment() {
                 hintCharBtn.width = 25
                 hintCharBtn.height = 25
                 hintCharBtn.textSize = 10F
-//                hintCharBtn.foreground =
-//                    getDrawable(context, android.R.attr.selectableItemBackground.toInt())
                 hintCharBtn.setBackgroundResource(outValue.resourceId)
                 hintCharBtn.background =
                     ContextCompat.getDrawable(context, R.drawable.char_shape_button_containers)
