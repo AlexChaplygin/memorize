@@ -57,14 +57,6 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:src="@drawable/icon_backspace"
                 app:backgroundTint="#00D1D1C8" />
-
-            <ImageButton
-                android:id="@+id/word_to_check_help_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/help"
-                app:backgroundTint="#00D1D1C8" />
         </LinearLayout>
 
         <LinearLayout
@@ -75,33 +67,14 @@
             android:orientation="vertical"
             tools:layout_editor_absoluteX="16dp">
 
-            <!--            <LinearLayout-->
-            <!--                android:id="@+id/chars_layout12"-->
-            <!--                android:layout_width="fill_parent"-->
-            <!--                android:layout_height="140dp"-->
-            <!--                android:gravity="center"-->
-            <!--                android:orientation="horizontal"-->
-            <!--                tools:layout_editor_absoluteX="16dp">-->
+            <ImageButton
+                android:id="@+id/word_to_check_help_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:src="@drawable/help"
+                app:backgroundTint="#00D1D1C8" />
 
-            <!--            <Button-->
-            <!--                android:layout_width="35dp"-->
-            <!--                android:layout_height="35dp"-->
-            <!--                android:layout_marginTop="10dp"-->
-            <!--                android:textColor="@color/black"-->
-            <!--                android:layout_marginEnd="0dp"-->
-            <!--                android:layout_marginBottom="10dp"-->
-            <!--                android:insetTop="-10dp"-->
-            <!--                android:insetBottom="-10dp"-->
-            <!--                android:insetLeft="-10dp"-->
-            <!--                android:insetRight="-10dp"-->
-            <!--                android:textSize="16sp"-->
-            <!--                android:background="@drawable/char_shape_button_containers"-->
-            <!--                android:text="c"-->
-            <!--                android:textColorHint="@color/black"-->
-            <!--                app:backgroundTint="#D1D1C8" />-->
-            <!--                -->
-
-            <!--            </LinearLayout>-->
             <CheckBox
                 android:id="@+id/is_difficult_chb"
                 android:layout_width="wrap_content"
