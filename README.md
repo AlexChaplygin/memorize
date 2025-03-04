@@ -1,1 +1,1 @@
-test
+Application to memorize words.
