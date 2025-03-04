@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/train_word_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.CheckWordFragment">
+
+    <LinearLayout
+        android:id="@+id/word_trainning_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp">
+
+        <TextView
+            android:id="@+id/word_to_train_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text=""
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/word_to_test_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="16dp">
+
+            <EditText
+                android:id="@+id/word_to_check_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="15"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                tools:layout_editor_absoluteX="10dp"
+                tools:layout_editor_absoluteY="10dp" />
+
+            <ImageButton
+                android:id="@+id/word_to_check_backtrack_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:src="@drawable/icon_backspace"
+                app:backgroundTint="#00D1D1C8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/chars_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="16dp">
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/chars_layout12"-->
+            <!--                android:layout_width="fill_parent"-->
+            <!--                android:layout_height="140dp"-->
+            <!--                android:gravity="center"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                tools:layout_editor_absoluteX="16dp">-->
+
+            <!--            <Button-->
+            <!--                android:layout_width="35dp"-->
+            <!--                android:layout_height="35dp"-->
+            <!--                android:layout_marginTop="10dp"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:layout_marginEnd="0dp"-->
+            <!--                android:layout_marginBottom="10dp"-->
+            <!--                android:insetTop="-10dp"-->
+            <!--                android:insetBottom="-10dp"-->
+            <!--                android:insetLeft="-10dp"-->
+            <!--                android:insetRight="-10dp"-->
+            <!--                android:textSize="16sp"-->
+            <!--                android:background="@drawable/char_shape_button_containers"-->
+            <!--                android:text="c"-->
+            <!--                android:textColorHint="@color/black"-->
+            <!--                app:backgroundTint="#D1D1C8" />-->
+            <!--                -->
+
+            <!--            </LinearLayout>-->
+            <CheckBox
+                android:id="@+id/is_difficult_chb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Is difficult" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/check_word_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Check" />
+    </LinearLayout>
+
+</FrameLayout>

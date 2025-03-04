@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/add_new_word"
+        android:orderInCategory="1"
+        android:title="Add new word" />
+    <item
+        android:id="@+id/import_from_csv"
+        android:orderInCategory="1"
+        android:title="Import from csv" />
+    <item
+        android:id="@+id/export_to_csv"
+        android:orderInCategory="1"
+        android:title="Export to csv" />
+    <item
+        android:id="@+id/delete_dictionary"
+        android:orderInCategory="1"
+        android:title="Delete dictionary" />
+    <item
+        android:id="@+id/exit"
+        android:orderInCategory="3"
+        android:title="Exit" />
+</menu>

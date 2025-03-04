@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/my_background"
+    tools:context=".activity.DictionaryActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/dictionary_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:tooltipText="_"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/back_to_dictionaries_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/left_arrowhead_outline"
+        app:backgroundTint="#00D1D1C8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dictionary_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/dictionary_training"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_to_dictionaries_btn"
+        tools:layout_editor_absoluteX="16dp">
+
+        <TextView
+            android:id="@+id/words_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/transparent"
+            android:text=""
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_editor_absoluteX="24dp"
+            app:layout_editor_absoluteY="151dp" />
+
+        <Button
+            android:id="@+id/train_words_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Train" />
+
+        <Button
+            android:id="@+id/train_diff_words_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Train difficult words" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
