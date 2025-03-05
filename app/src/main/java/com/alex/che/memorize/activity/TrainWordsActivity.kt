@@ -18,6 +18,8 @@ import org.koin.android.ext.android.inject
 import java.util.Stack
 import java.util.stream.IntStream
 
+private const val WORDS_TO_TRAIN = 50
+
 class TrainWordsActivity : AppCompatActivity() {
 
     private val memorizeDatabase: MemorizeDatabase by inject()
@@ -51,6 +53,8 @@ class TrainWordsActivity : AppCompatActivity() {
             val word = wordsStack.pop()
             val bundle = Bundle()
             bundle.putSerializable("word", word)
+            bundle.putInt("current_count", WORDS_TO_TRAIN - wordsStack.size)
+            bundle.putInt("amount_of_words", WORDS_TO_TRAIN)
             val ft = supportFragmentManager.beginTransaction()
             ft.replace(
                 R.id.layout_to_train_words_fragment,
@@ -62,6 +66,7 @@ class TrainWordsActivity : AppCompatActivity() {
             ft.commit()
         } else {
             val intent = Intent(this, DictionaryActivity::class.java)
+            intent.putExtra("SELECTED_DICTIONARY_ID", dictionaryId)
             startActivity(intent)
             finish()
         }
@@ -84,14 +89,14 @@ class TrainWordsActivity : AppCompatActivity() {
             return
         }
 
-        if (wordsIdList.size < 50) {
+        if (wordsIdList.size < WORDS_TO_TRAIN) {
             val wordsList = memorizeDatabase.wordDao.loadWords(wordsIdList).shuffled()
             wordsList.map { wordConverter.convert(it) }
                 .forEach { wordsStack.push(it) }
             return
         }
 
-        IntStream.range(0, 50).forEach {
+        IntStream.range(0, WORDS_TO_TRAIN).forEach {
             idsToTrain.add(wordsIdList.random())
         }
         val wordsList = memorizeDatabase.wordDao.loadWords(idsToTrain).shuffled()

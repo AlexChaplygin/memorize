@@ -30,15 +30,18 @@ import org.koin.android.ext.android.inject
 import java.util.stream.IntStream
 import kotlin.math.min
 
-
 class CheckWordFragment : Fragment() {
 
     private val memorizeDatabase: MemorizeDatabase by inject()
     private var word: WordDto? = null
+    private var currentCountWord: Int? = null
+    private var amountOfWords: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         word = arguments?.getSerializable("word", WordDto::class.java)
+        currentCountWord = arguments?.getInt("current_count")
+        amountOfWords = arguments?.getInt("amount_of_words")
         if (word == null) {
             Log.i("CheckWordFragment", "Word is null.")
             throw Exception("CheckWordFragment: Word is null.")
@@ -50,9 +53,12 @@ class CheckWordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val checkWordFragmentView = inflater.inflate(R.layout.fragment_check_word, container, false)
+        val wordsCurrOutOfSumTv: TextView =
+            checkWordFragmentView.findViewById(R.id.words_curr_out_of_sum_tv)!!
         val wordToTrainTv: TextView = checkWordFragmentView.findViewById(R.id.word_to_train_tv)!!
         val wordToCheckEt: EditText = checkWordFragmentView.findViewById(R.id.word_to_check_et)!!
         wordToTrainTv.text = word!!.translation
+        wordsCurrOutOfSumTv.text = "Word $currentCountWord out of $amountOfWords."
 
         val isDifficultChb: CheckBox = checkWordFragmentView.findViewById(R.id.is_difficult_chb)!!
         isDifficultChb.isChecked = word!!.isDifficult
@@ -172,9 +178,9 @@ class CheckWordFragment : Fragment() {
                 val hintCharBtn = Button(context)
                 hintCharBtn.text = char.toString()
                 hintCharBtn.setTextColor(ColorStateList.valueOf(Color.BLACK))
-                hintCharBtn.width = 25
-                hintCharBtn.height = 25
-                hintCharBtn.textSize = 10F
+                hintCharBtn.width = 32
+                hintCharBtn.height = 33
+                hintCharBtn.textSize = 12F
                 hintCharBtn.setBackgroundResource(outValue.resourceId)
                 hintCharBtn.background =
                     ContextCompat.getDrawable(context, R.drawable.char_shape_button_containers)
@@ -186,7 +192,7 @@ class CheckWordFragment : Fragment() {
                     85,
                     85
                 )
-                params.setMargins(0, 10, 0, 10)
+                params.setMargins(10, 10, 0, 10)
                 hintCharBtn.setLayoutParams(params)
 
                 dictionariesHLinearLayout.addView(hintCharBtn)
