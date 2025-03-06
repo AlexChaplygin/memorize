@@ -171,15 +171,15 @@ class CheckWordFragment : Fragment() {
             dictionariesHLinearLayout.background =
                 ContextCompat.getDrawable(context, R.drawable.shape_rounded_conteiners)
 
-            val index = min(8, wordCharArray.count() - countChar)
+            val index = min(7, wordCharArray.count() - countChar)
             IntStream.range(0, index).forEach {
 
                 val char = wordCharArray[countChar]
                 val hintCharBtn = Button(context)
                 hintCharBtn.text = char.toString()
                 hintCharBtn.setTextColor(ColorStateList.valueOf(Color.BLACK))
-                hintCharBtn.width = 32
-                hintCharBtn.height = 33
+                hintCharBtn.width = 70
+                hintCharBtn.height = 70
                 hintCharBtn.textSize = 12F
                 hintCharBtn.setBackgroundResource(outValue.resourceId)
                 hintCharBtn.background =

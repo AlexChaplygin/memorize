@@ -30,6 +30,7 @@ class TrainWordsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        wordsStack = Stack()
         setContentView(R.layout.activity_train_words)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -81,7 +82,7 @@ class TrainWordsActivity : AppCompatActivity() {
 
     private fun getWordsToTrain(trainDifficultWords: Boolean) {
         Log.i("TrainWordsActivity", "getWordsToTrain()")
-        val idsToTrain = mutableListOf<Int>()
+        val idsToTrain = mutableSetOf<Int>()
         val wordsIdList =
             memorizeDatabase.wordDao.loadIdsByDictId(dictionaryId, trainDifficultWords)
         if (wordsIdList.isNullOrEmpty()) {
@@ -96,10 +97,11 @@ class TrainWordsActivity : AppCompatActivity() {
             return
         }
 
-        IntStream.range(0, WORDS_TO_TRAIN).forEach {
+        while (idsToTrain.size < WORDS_TO_TRAIN) {
             idsToTrain.add(wordsIdList.random())
         }
-        val wordsList = memorizeDatabase.wordDao.loadWords(idsToTrain).shuffled()
+
+        val wordsList = memorizeDatabase.wordDao.loadWords(idsToTrain.toList()).shuffled()
         wordsList.map { wordConverter.convert(it) }
             .forEach { wordsStack.push(it) }
         Log.i("TrainWordsActivity", "Got ${wordsStack.size} words.")
