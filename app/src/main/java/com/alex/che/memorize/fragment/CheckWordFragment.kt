@@ -178,9 +178,7 @@ class CheckWordFragment : Fragment() {
                 val hintCharBtn = Button(context)
                 hintCharBtn.text = char.toString()
                 hintCharBtn.setTextColor(ColorStateList.valueOf(Color.BLACK))
-                hintCharBtn.width = 70
-                hintCharBtn.height = 70
-                hintCharBtn.textSize = 12F
+                hintCharBtn.textSize = 13F
                 hintCharBtn.setBackgroundResource(outValue.resourceId)
                 hintCharBtn.background =
                     ContextCompat.getDrawable(context, R.drawable.char_shape_button_containers)
@@ -189,8 +187,8 @@ class CheckWordFragment : Fragment() {
                 }
 
                 val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
-                    85,
-                    85
+                    130,
+                    130
                 )
                 params.setMargins(10, 10, 0, 10)
                 hintCharBtn.setLayoutParams(params)
