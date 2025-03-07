@@ -36,6 +36,7 @@ class CheckWordFragment : Fragment() {
     private var word: WordDto? = null
     private var currentCountWord: Int? = null
     private var amountOfWords: Int? = null
+    private val COUNT_OF_HINT_BUTTONS = 7
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,14 +153,14 @@ class CheckWordFragment : Fragment() {
             true
         )
 
-        val count =
-            if (wordCharArray.count() % 8 == 0)
-                wordCharArray.count() / 8
+        val countOfHintBtnsLayoutsH =
+            if (wordCharArray.count() % COUNT_OF_HINT_BUTTONS == 0)
+                wordCharArray.count() / COUNT_OF_HINT_BUTTONS
             else
-                (wordCharArray.count() / 8) + 1
+                (wordCharArray.count() / COUNT_OF_HINT_BUTTONS) + 1
         var countChar = 0
 
-        IntStream.range(0, count).forEach {
+        IntStream.range(0, countOfHintBtnsLayoutsH).forEach {
 
             val dictionariesHLinearLayout = LinearLayout(context)
             dictionariesHLinearLayout.layoutParams = LinearLayout.LayoutParams(
@@ -171,9 +172,8 @@ class CheckWordFragment : Fragment() {
             dictionariesHLinearLayout.background =
                 ContextCompat.getDrawable(context, R.drawable.shape_rounded_conteiners)
 
-            val index = min(7, wordCharArray.count() - countChar)
+            val index = min(COUNT_OF_HINT_BUTTONS, wordCharArray.count() - countChar)
             IntStream.range(0, index).forEach {
-
                 val char = wordCharArray[countChar]
                 val hintCharBtn = Button(context)
                 hintCharBtn.text = char.toString()
