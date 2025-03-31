@@ -14,5 +14,6 @@ data class Word(
     val isDifficult: Boolean,
     var dictionaryId: Int?,
     @ColumnInfo(name = "created_date")
-    val createdDate: LocalDateTime,
+    var createdDate: LocalDateTime,
+    var checkDate: LocalDateTime,
 )

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.alex.che.memorize.entity.Word
+import java.time.LocalDateTime
 
 @Dao
 interface WordDao {
@@ -26,12 +27,18 @@ interface WordDao {
     @Query("SELECT * FROM word where dictionaryId = :dictId")
     fun loadWordsByDictId(dictId: Int): List<Word>?
 
-    @Query("SELECT id FROM word where dictionaryId = :dictId and isDifficult = :isDifficult")
-    fun loadIdsByDictId(dictId: Int, isDifficult: Boolean): List<Int>?
+    @Query("SELECT * FROM word where dictionaryId = :dictId order by checkDate desc")
+    fun loadByDictId(dictId: Int): List<Word>
+
+    @Query("SELECT * FROM word where dictionaryId = :dictId and isDifficult = true order by checkDate desc")
+    fun loadDifficultWordsByDictId(dictId: Int): List<Word>
 
     @Query("SELECT * FROM word where id in (:ids)")
     fun loadWords(ids: List<Int>): List<Word>
 
     @Query("update word set isDifficult = :isChecked where id = :id")
     fun changeIsDifficult(id: Int?, isChecked: Boolean)
+
+    @Query("update word set checkDate = :date where id = :id")
+    fun changeWordDateById(id: Int?, date: LocalDateTime)
 }

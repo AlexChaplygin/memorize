@@ -62,6 +62,7 @@ class AddWordActivity : AppCompatActivity() {
                 translation,
                 true,
                 dictionaryId,
+                LocalDateTime.now(),
                 LocalDateTime.now()
             )
         )

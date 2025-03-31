@@ -27,6 +27,7 @@ import com.alex.che.memorize.activity.TrainWordsActivity
 import com.alex.che.memorize.dto.WordDto
 import com.alex.che.memorize.repository.MemorizeDatabase
 import org.koin.android.ext.android.inject
+import java.time.LocalDateTime
 import java.util.stream.IntStream
 import kotlin.math.min
 
@@ -98,6 +99,7 @@ class CheckWordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == word!!.word) {
                     wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
+                    memorizeDatabase.wordDao.changeWordDateById(word!!.id, LocalDateTime.now())
                     sleep()
                 } else {
                     wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)
@@ -124,6 +126,7 @@ class CheckWordFragment : Fragment() {
     private fun checkWord(wordToCheckEt: EditText) {
         if (wordToCheckEt.text.toString() == word!!.word) {
             wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
+            memorizeDatabase.wordDao.changeWordDateById(word!!.id, LocalDateTime.now())
             sleep()
         } else {
             wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)

@@ -10,4 +10,5 @@ data class WordDto(
     val isDifficult: Boolean,
     var dictionaryId: Int?,
     val createdDate: LocalDateTime,
+    val checkDate: LocalDateTime,
 ) : Serializable

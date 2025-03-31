@@ -15,7 +15,8 @@ class WordConverter : KoinComponent {
             translation = source.translation,
             isDifficult = false,
             dictionaryId = null,
-            createdDate = LocalDateTime.now()
+            createdDate = LocalDateTime.now(),
+            checkDate = LocalDateTime.now()
         )
 
     fun convert(source: Word): WordDto =
@@ -25,6 +26,7 @@ class WordConverter : KoinComponent {
             translation = source.translation,
             isDifficult = source.isDifficult,
             dictionaryId = source.dictionaryId,
-            createdDate = source.createdDate
+            createdDate = source.createdDate,
+            checkDate = source.checkDate
         )
 }
