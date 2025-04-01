@@ -63,7 +63,7 @@ class AddWordActivity : AppCompatActivity() {
                 true,
                 dictionaryId,
                 LocalDateTime.now(),
-                LocalDateTime.now()
+                LocalDateTime.of(1999, 1, 1, 1, 1)
             )
         )
         Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show()

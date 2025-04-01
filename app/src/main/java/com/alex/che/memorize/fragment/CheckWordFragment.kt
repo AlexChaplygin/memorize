@@ -99,7 +99,7 @@ class CheckWordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == word!!.word) {
                     wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
-                    memorizeDatabase.wordDao.changeWordDateById(word!!.id, LocalDateTime.now())
+                    memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
                     sleep()
                 } else {
                     wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)
@@ -126,7 +126,7 @@ class CheckWordFragment : Fragment() {
     private fun checkWord(wordToCheckEt: EditText) {
         if (wordToCheckEt.text.toString() == word!!.word) {
             wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
-            memorizeDatabase.wordDao.changeWordDateById(word!!.id, LocalDateTime.now())
+            memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
             sleep()
         } else {
             wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)

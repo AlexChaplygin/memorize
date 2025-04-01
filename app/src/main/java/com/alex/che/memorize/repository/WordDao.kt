@@ -27,10 +27,10 @@ interface WordDao {
     @Query("SELECT * FROM word where dictionaryId = :dictId")
     fun loadWordsByDictId(dictId: Int): List<Word>?
 
-    @Query("SELECT * FROM word where dictionaryId = :dictId order by checkDate desc")
+    @Query("SELECT * FROM word where dictionaryId = :dictId order by checkDate asc")
     fun loadByDictId(dictId: Int): List<Word>
 
-    @Query("SELECT * FROM word where dictionaryId = :dictId and isDifficult = true order by checkDate desc")
+    @Query("SELECT * FROM word where dictionaryId = :dictId and isDifficult = true order by checkDate asc")
     fun loadDifficultWordsByDictId(dictId: Int): List<Word>
 
     @Query("SELECT * FROM word where id in (:ids)")
@@ -40,5 +40,5 @@ interface WordDao {
     fun changeIsDifficult(id: Int?, isChecked: Boolean)
 
     @Query("update word set checkDate = :date where id = :id")
-    fun changeWordDateById(id: Int?, date: LocalDateTime)
+    fun changeWordCheckDateById(id: Int?, date: LocalDateTime)
 }

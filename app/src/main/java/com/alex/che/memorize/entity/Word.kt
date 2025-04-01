@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 @Entity(tableName = "word")
 data class Word(
     @PrimaryKey(autoGenerate = true)
-    val id: Int?=null,
+    val id: Int? = null,
     val word: String,
     val translation: String,
     val isDifficult: Boolean,

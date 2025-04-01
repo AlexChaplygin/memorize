@@ -16,7 +16,7 @@ class WordConverter : KoinComponent {
             isDifficult = false,
             dictionaryId = null,
             createdDate = LocalDateTime.now(),
-            checkDate = LocalDateTime.now()
+            checkDate = LocalDateTime.of(1999, 1, 1, 1, 1)
         )
 
     fun convert(source: Word): WordDto =
