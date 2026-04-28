@@ -9,9 +9,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.R
 import com.alex.che.memorize.entity.Word
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.time.LocalDateTime
 
@@ -55,17 +57,19 @@ class AddWordActivity : AppCompatActivity() {
     }
 
     private fun saveWord(word: String, translation: String) {
-        memorizeDatabase.wordDao.insertWord(
-            Word(
-                null,
-                word,
-                translation,
-                true,
-                dictionaryId,
-                LocalDateTime.now(),
-                LocalDateTime.of(1999, 1, 1, 1, 1)
+        lifecycleScope.launch {
+            memorizeDatabase.wordDao.insertWord(
+                Word(
+                    null,
+                    word,
+                    translation,
+                    true,
+                    dictionaryId,
+                    LocalDateTime.now(),
+                    LocalDateTime.of(1999, 1, 1, 1, 1)
+                )
             )
-        )
-        Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@AddWordActivity, "Added", Toast.LENGTH_SHORT).show()
+        }
     }
 }

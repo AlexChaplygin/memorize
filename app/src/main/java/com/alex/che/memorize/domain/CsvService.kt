@@ -8,6 +8,8 @@ import android.os.Environment.getExternalStoragePublicDirectory
 import com.alex.che.memorize.converter.WordConverter
 import com.alex.che.memorize.dto.WordCsvDto
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
@@ -19,7 +21,7 @@ class CsvService : KoinComponent {
     private val memorizeDatabase: MemorizeDatabase by inject()
     private val wordConverter: WordConverter by inject()
 
-    fun import(url: Uri, dicitionaryId: Int, context: ContextWrapper) {
+    suspend fun import(url: Uri, dicitionaryId: Int, context: ContextWrapper) = withContext(Dispatchers.IO) {
         readCsv(url, context).map {
             wordConverter.convert(it).also {
                 it.dictionaryId = dicitionaryId
@@ -41,13 +43,13 @@ class CsvService : KoinComponent {
             }.toList()
     }
 
-    fun export(dictionaryId: Int, name: String) {
+    suspend fun export(dictionaryId: Int, name: String) = withContext(Dispatchers.IO) {
         val folder = getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
         val file = File(folder, "$name.csv")
         FileOutputStream(file).writeCsv(dictionaryId)
     }
 
-    private fun OutputStream.writeCsv(dictionaryId: Int) {
+    private suspend fun OutputStream.writeCsv(dictionaryId: Int) {
         val words = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
         val writer = bufferedWriter()
         words?.forEach {

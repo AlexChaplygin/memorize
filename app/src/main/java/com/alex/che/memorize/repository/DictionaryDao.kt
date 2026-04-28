@@ -12,20 +12,20 @@ import com.alex.che.memorize.entity.Dictionary
 interface DictionaryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDictionary(vararg dictionary: Dictionary)
+    suspend fun insertDictionary(vararg dictionary: Dictionary)
 
     @Update
-    fun updateDictionary(vararg dictionary: Dictionary)
+    suspend fun updateDictionary(vararg dictionary: Dictionary)
 
     @Delete
-    fun deleteDictionary(vararg dictionary: Dictionary)
+    suspend fun deleteDictionary(vararg dictionary: Dictionary)
 
     @Query("DELETE from dictionary where id = :id")
-    fun deleteDictionary(id:Int)
+    suspend fun deleteDictionary(id: Int)
 
     @Query("SELECT * FROM dictionary")
-    fun loadAllDictionaries(): List<Dictionary>?
+    suspend fun loadAllDictionaries(): List<Dictionary>
 
     @Query("select * from dictionary where id = :id")
-    fun findDictionaryById(id:Int): Dictionary
+    suspend fun findDictionaryById(id: Int): Dictionary
 }

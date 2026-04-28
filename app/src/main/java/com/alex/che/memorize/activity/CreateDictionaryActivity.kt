@@ -8,10 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.MainActivity
 import com.alex.che.memorize.R
 import com.alex.che.memorize.entity.Dictionary
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.time.LocalDateTime
 
@@ -42,16 +44,18 @@ class CreateDictionaryActivity : AppCompatActivity() {
     }
 
     private fun createDictionary(name: String) {
-        memorizeDatabase.dictionaryDao.insertDictionary(
-            Dictionary(
-                null,
-                name,
-                LocalDateTime.now()
+        lifecycleScope.launch {
+            memorizeDatabase.dictionaryDao.insertDictionary(
+                Dictionary(
+                    null,
+                    name,
+                    LocalDateTime.now()
+                )
             )
-        )
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+            val intent = Intent(this@CreateDictionaryActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun backToMain() {

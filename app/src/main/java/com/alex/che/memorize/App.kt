@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.room.Room
 import com.alex.che.memorize.converter.WordConverter
 import com.alex.che.memorize.domain.CsvService
-
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -15,13 +17,15 @@ import org.koin.dsl.module
 
 class App : Application() {
     private val DATABASE_NAME = "memorize"
+    
     val appModule = module {
         single {
             Room.databaseBuilder(androidApplication(), MemorizeDatabase::class.java, DATABASE_NAME)
-                .allowMainThreadQueries().build()
+                .build()
         }
         single { CsvService() }
         single { WordConverter() }
+        single { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
     }
 
     override fun onCreate() {

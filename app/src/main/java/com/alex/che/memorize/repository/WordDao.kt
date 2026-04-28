@@ -13,32 +13,32 @@ import java.time.LocalDateTime
 interface WordDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWord(vararg word: Word)
+    suspend fun insertWord(vararg word: Word)
 
     @Update
-    fun updateWord(vararg word: Word)
+    suspend fun updateWord(vararg word: Word)
 
     @Delete
-    fun deleteWord(vararg word: Word)
+    suspend fun deleteWord(vararg word: Word)
 
     @Query("SELECT * FROM word")
-    fun loadAllWords(): List<Word>?
+    suspend fun loadAllWords(): List<Word>?
 
     @Query("SELECT * FROM word where dictionaryId = :dictId")
-    fun loadWordsByDictId(dictId: Int): List<Word>?
+    suspend fun loadWordsByDictId(dictId: Int): List<Word>?
 
     @Query("SELECT * FROM word where dictionaryId = :dictId order by checkDate asc")
-    fun loadByDictId(dictId: Int): List<Word>
+    suspend fun loadByDictId(dictId: Int): List<Word>
 
     @Query("SELECT * FROM word where dictionaryId = :dictId and isDifficult = true order by checkDate asc")
-    fun loadDifficultWordsByDictId(dictId: Int): List<Word>
+    suspend fun loadDifficultWordsByDictId(dictId: Int): List<Word>
 
     @Query("SELECT * FROM word where id in (:ids)")
-    fun loadWords(ids: List<Int>): List<Word>
+    suspend fun loadWords(ids: List<Int>): List<Word>
 
     @Query("update word set isDifficult = :isChecked where id = :id")
-    fun changeIsDifficult(id: Int?, isChecked: Boolean)
+    suspend fun changeIsDifficult(id: Int?, isChecked: Boolean)
 
     @Query("update word set checkDate = :date where id = :id")
-    fun changeWordCheckDateById(id: Int?, date: LocalDateTime)
+    suspend fun changeWordCheckDateById(id: Int?, date: LocalDateTime)
 }

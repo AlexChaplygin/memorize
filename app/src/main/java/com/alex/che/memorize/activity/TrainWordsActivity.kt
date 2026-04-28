@@ -9,11 +9,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.R
 import com.alex.che.memorize.converter.WordConverter
 import com.alex.che.memorize.dto.WordDto
 import com.alex.che.memorize.fragment.CheckWordFragment
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.util.Stack
 
@@ -46,8 +50,14 @@ class TrainWordsActivity : AppCompatActivity() {
             goToDictionary()
         }
 
-        wordsAmount = getWordsToTrain(trainDifficultWords)
-        setNewFragment()
+        lifecycleScope.launch {
+            wordsAmount = getWordsToTrain(trainDifficultWords)
+            if (wordsAmount > 0) {
+                setNewFragment()
+            } else {
+                finish()
+            }
+        }
     }
 
     fun setNewFragment() {
@@ -81,7 +91,7 @@ class TrainWordsActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getWordsToTrain(trainDifficultWords: Boolean): Int {
+    private suspend fun getWordsToTrain(trainDifficultWords: Boolean): Int = withContext(Dispatchers.IO) {
         Log.i("TrainWordsActivity", "getWordsToTrain()")
         val words = if (trainDifficultWords) {
             memorizeDatabase.wordDao.loadDifficultWordsByDictId(dictionaryId)
@@ -89,8 +99,10 @@ class TrainWordsActivity : AppCompatActivity() {
             memorizeDatabase.wordDao.loadByDictId(dictionaryId)
         }
         if (words.isEmpty()) {
-            Toast.makeText(this, "No words in dictionary.", Toast.LENGTH_SHORT).show()
-            return 0
+            runOnUiThread {
+                Toast.makeText(this@TrainWordsActivity, "No words in dictionary.", Toast.LENGTH_SHORT).show()
+            }
+            return@withContext 0
         }
 
         val takenList = words.take(WORDS_TO_TAKE).shuffled().take(WORDS_TO_TRAIN)
@@ -98,7 +110,7 @@ class TrainWordsActivity : AppCompatActivity() {
             .forEach { wordsStack.push(it) }
 
         Log.i("TrainWordsActivity", "Got ${wordsStack.size} words.")
-        return takenList.size
+        return@withContext takenList.size
     }
 
 }

@@ -15,10 +15,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.MainActivity
 import com.alex.che.memorize.R
 import com.alex.che.memorize.domain.CsvService
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import kotlin.system.exitProcess
 
@@ -83,16 +85,20 @@ class DictionaryActivity : AppCompatActivity() {
     }
 
     private fun exportDictionary() {
-        val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
-        csvService.export(dictionaryId, dictionary.name)
-        Toast.makeText(this, "Export finished.", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
+            csvService.export(dictionaryId, dictionary.name)
+            Toast.makeText(this@DictionaryActivity, "Export finished.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun deleteDictionary() {
-        memorizeDatabase.dictionaryDao.deleteDictionary(dictionaryId)
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        lifecycleScope.launch {
+            memorizeDatabase.dictionaryDao.deleteDictionary(dictionaryId)
+            val intent = Intent(this@DictionaryActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun addWord() {
@@ -122,8 +128,10 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun refreshWordsList() {
         val wordsCountTv: TextView = findViewById(R.id.words_count)
-        val wordsInDictionary = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
-        wordsCountTv.text = wordsInDictionary?.count().toString()
+        lifecycleScope.launch {
+            val wordsInDictionary = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
+            wordsCountTv.text = wordsInDictionary?.count().toString()
+        }
     }
 
     val importFromCsvResult =
@@ -131,8 +139,11 @@ class DictionaryActivity : AppCompatActivity() {
             ActivityResultContracts.GetContent()
         ) { result ->
             if (result != null) {
-                this.csvService.import(result, dictionaryId, this)
-                Toast.makeText(this, "Import finished.", Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch {
+                    csvService.import(result, dictionaryId, this@DictionaryActivity)
+                    Toast.makeText(this@DictionaryActivity, "Import finished.", Toast.LENGTH_SHORT).show()
+                    refreshWordsList()
+                }
             }
         }
 

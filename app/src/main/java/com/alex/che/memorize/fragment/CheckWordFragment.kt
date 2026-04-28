@@ -3,11 +3,8 @@ package com.alex.che.memorize.fragment
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -22,10 +19,15 @@ import android.widget.LinearLayout.HORIZONTAL
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.R
 import com.alex.che.memorize.activity.TrainWordsActivity
 import com.alex.che.memorize.dto.WordDto
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.time.LocalDateTime
 import java.util.stream.IntStream
@@ -45,8 +47,7 @@ class CheckWordFragment : Fragment() {
         currentCountWord = arguments?.getInt("current_count")
         amountOfWords = arguments?.getInt("amount_of_words")
         if (word == null) {
-            Log.i("CheckWordFragment", "Word is null.")
-            throw Exception("CheckWordFragment: Word is null.")
+            throw IllegalArgumentException("CheckWordFragment: Word is null.")
         }
     }
 
@@ -65,7 +66,9 @@ class CheckWordFragment : Fragment() {
         val isDifficultChb: CheckBox = checkWordFragmentView.findViewById(R.id.is_difficult_chb)!!
         isDifficultChb.isChecked = word!!.isDifficult
         isDifficultChb.setOnCheckedChangeListener { _, isChecked ->
-            memorizeDatabase.wordDao.changeIsDifficult(word!!.id, isChecked)
+            lifecycleScope.launch {
+                memorizeDatabase.wordDao.changeIsDifficult(word!!.id, isChecked)
+            }
         }
 
         val wordToCheckBacktrackBtn: ImageButton =
@@ -99,7 +102,9 @@ class CheckWordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == word!!.word) {
                     wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
-                    memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
+                    lifecycleScope.launch {
+                        memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
+                    }
                     sleep()
                 } else {
                     wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)
@@ -126,7 +131,9 @@ class CheckWordFragment : Fragment() {
     private fun checkWord(wordToCheckEt: EditText) {
         if (wordToCheckEt.text.toString() == word!!.word) {
             wordToCheckEt.setBackgroundResource(R.drawable.right_shape_rounded_conteiner)
-            memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
+            lifecycleScope.launch {
+                memorizeDatabase.wordDao.changeWordCheckDateById(word!!.id, LocalDateTime.now())
+            }
             sleep()
         } else {
             wordToCheckEt.setBackgroundResource(R.drawable.wrong_shape_rounded_conteiner)
@@ -134,11 +141,10 @@ class CheckWordFragment : Fragment() {
     }
 
     private fun sleep() {
-        Handler(Looper.getMainLooper()).postDelayed(object : Runnable {
-            override fun run() {
-                back()
-            }
-        }, 1000)
+        lifecycleScope.launch {
+            delay(1000)
+            back()
+        }
     }
 
     private fun putHints(checkWordFragmentView: View) {

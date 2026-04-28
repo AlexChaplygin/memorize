@@ -17,9 +17,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.activity.CreateDictionaryActivity
 import com.alex.che.memorize.activity.DictionaryActivity
 import com.alex.che.memorize.repository.MemorizeDatabase
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import kotlin.system.exitProcess
 
@@ -47,7 +49,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val dictionariesHLinearLayoutOuter: LinearLayout = findViewById(R.id.dictionaries)
-        dictionariesHLinearLayoutOuter.addView(getDictionariesView())
+        
+        // Загружаем словари в корутине
+        lifecycleScope.launch {
+            val dictionaries = memorizeDatabase.dictionaryDao.loadAllDictionaries()
+            dictionariesHLinearLayoutOuter.addView(getDictionariesView(dictionaries))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -58,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getDictionariesView(): LinearLayout {
+    private fun getDictionariesView(dictionaries: List<com.alex.che.memorize.entity.Dictionary>): LinearLayout {
         val dictionariesHLinearLayout = LinearLayout(this)
         dictionariesHLinearLayout.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -68,8 +75,6 @@ class MainActivity : AppCompatActivity() {
         dictionariesHLinearLayout.orientation = VERTICAL
         dictionariesHLinearLayout.background =
             ContextCompat.getDrawable(this, R.drawable.shape_rounded_conteiners)
-
-        val dictionaries = memorizeDatabase.dictionaryDao.loadAllDictionaries()
 
         if (!dictionaries.isNullOrEmpty()) {
             dictionaries.forEach { dict ->
