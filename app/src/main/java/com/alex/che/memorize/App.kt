@@ -2,8 +2,6 @@ package com.alex.che.memorize
 
 import android.app.Application
 import androidx.room.Room
-import com.alex.che.memorize.converter.WordConverter
-import com.alex.che.memorize.domain.CsvService
 import com.alex.che.memorize.repository.MemorizeDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,17 +12,16 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.fragment.koin.fragmentFactory
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import org.koin.ksp.generated.defaultModule
 
 class App : Application() {
     private val DATABASE_NAME = "memorize"
-    
+
     val appModule = module {
         single {
             Room.databaseBuilder(androidApplication(), MemorizeDatabase::class.java, DATABASE_NAME)
                 .build()
         }
-        single { CsvService() }
-        single { WordConverter() }
         single { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
     }
 
@@ -34,7 +31,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(appModule)
+            modules(appModule, defaultModule)
             fragmentFactory()
         }
     }

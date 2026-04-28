@@ -10,16 +10,17 @@ import com.alex.che.memorize.dto.WordCsvDto
 import com.alex.che.memorize.repository.MemorizeDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Single
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-class CsvService : KoinComponent {
-
-    private val memorizeDatabase: MemorizeDatabase by inject()
-    private val wordConverter: WordConverter by inject()
+@Single
+class CsvService(
+    private val memorizeDatabase: MemorizeDatabase,
+    private val wordConverter: WordConverter
+) {
 
     suspend fun import(url: Uri, dicitionaryId: Int, context: ContextWrapper) = withContext(Dispatchers.IO) {
         readCsv(url, context).map {

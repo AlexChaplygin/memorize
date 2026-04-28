@@ -3,10 +3,11 @@ package com.alex.che.memorize.converter
 import com.alex.che.memorize.dto.WordCsvDto
 import com.alex.che.memorize.dto.WordDto
 import com.alex.che.memorize.entity.Word
-import org.koin.core.component.KoinComponent
+import org.koin.core.annotation.Single
 import java.time.LocalDateTime
 
-class WordConverter : KoinComponent {
+@Single
+class WordConverter {
 
     fun convert(source: WordCsvDto): Word =
         Word(
