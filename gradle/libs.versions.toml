@@ -1,14 +1,14 @@
 [versions]
-agp = "8.8.1"
-kotlin = "2.0.21"
-coreKtx = "1.10.1"
+agp = "8.8.2"
+kotlin = "2.1.0"
+coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-appcompat = "1.6.1"
-material = "1.10.0"
-activity = "1.8.0"
-constraintlayout = "2.1.4"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.10.0"
+constraintlayout = "2.2.0"
 roomRuntime = "2.6.1"
 koin = "4.0.2"
 koin-annotation = "1.4.0"
@@ -17,7 +17,7 @@ legacySupportV4 = "1.0.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 fragmentKtx = "1.8.6"
-kotlinxCoroutines = "1.9.0"
+kotlinxCoroutines = "1.10.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,5 +46,5 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.27"}
+kotlin-ksp = { id = "com.google.devtools.ksp", version = "2.1.0-1.0.29"}
 
