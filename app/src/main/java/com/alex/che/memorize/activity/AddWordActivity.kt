@@ -57,12 +57,13 @@ class AddWordActivity : AppCompatActivity() {
     }
 
     private fun saveWord(word: String, translation: String) {
+        val normalizedTranslation = translation.replace("\\r?\\n".toRegex(), " ")
         lifecycleScope.launch {
             memorizeDatabase.wordDao.insertWord(
                 Word(
                     null,
                     word,
-                    translation,
+                    normalizedTranslation,
                     true,
                     dictionaryId,
                     LocalDateTime.now(),

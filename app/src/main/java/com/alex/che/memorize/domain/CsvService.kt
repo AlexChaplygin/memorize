@@ -15,6 +15,7 @@ import org.koin.core.annotation.Single
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.time.LocalDateTime
 
 @Single
 class CsvService(
@@ -38,9 +39,18 @@ class CsvService(
 
         return reader.lineSequence()
             .filter { it.isNotBlank() }
-            .map {
-                val (word, translation) = it.split('|', ignoreCase = false, limit = 2)
-                WordCsvDto(word.trim(), translation.trim())
+            .map { line ->
+                val parts = line.split('|')
+                val word = parts.getOrElse(0) { "" }.trim()
+                val translation = parts.getOrElse(1) { "" }.trim().replace("\\r?\\n".toRegex(), " ")
+                val isDifficult = parts.getOrElse(2) { "false" }.trim().toBoolean()
+                val checkDateStr = parts.getOrElse(3) { "1999-01-01T01:01" }.trim()
+                val checkDate = try {
+                    LocalDateTime.parse(checkDateStr)
+                } catch (e: Exception) {
+                    LocalDateTime.of(1999, 1, 1, 1, 1)
+                }
+                WordCsvDto(word, translation, isDifficult, checkDate)
             }.toList()
     }
 
@@ -54,7 +64,8 @@ class CsvService(
         val words = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
         val writer = bufferedWriter()
         words?.forEach {
-            writer.write("${it.word}| ${it.translation}")
+            val checkDateStr = it.checkDate.toString()
+            writer.write("${it.word}|${it.translation}|${it.isDifficult}|$checkDateStr")
             writer.newLine()
         }
         writer.flush()

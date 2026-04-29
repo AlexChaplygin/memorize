@@ -14,10 +14,10 @@ class WordConverter {
             id = null,
             word = source.word,
             translation = source.translation,
-            isDifficult = false,
+            isDifficult = source.isDifficult,
             dictionaryId = null,
             createdDate = LocalDateTime.now(),
-            checkDate = LocalDateTime.of(1999, 1, 1, 1, 1)
+            checkDate = source.checkDate
         )
 
     fun convert(source: Word): WordDto =
