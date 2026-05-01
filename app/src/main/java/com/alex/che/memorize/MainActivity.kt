@@ -48,9 +48,19 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        loadDictionaries()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Перезагружаем словари при возврате на главный экран
+        loadDictionaries()
+    }
+
+    private fun loadDictionaries() {
         val dictionariesHLinearLayoutOuter: LinearLayout = findViewById(R.id.dictionaries)
-        
-        // Загружаем словари в корутине
+        dictionariesHLinearLayoutOuter.removeAllViews()
+
         lifecycleScope.launch {
             val dictionaries = memorizeDatabase.dictionaryDao.loadAllDictionaries()
             dictionariesHLinearLayoutOuter.addView(getDictionariesView(dictionaries))

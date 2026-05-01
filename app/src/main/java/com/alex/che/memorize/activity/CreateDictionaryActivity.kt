@@ -1,66 +1,30 @@
 package com.alex.che.memorize.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.alex.che.memorize.MainActivity
-import com.alex.che.memorize.R
-import com.alex.che.memorize.entity.Dictionary
-import com.alex.che.memorize.repository.MemorizeDatabase
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import java.time.LocalDateTime
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Surface
+import com.alex.che.memorize.ui.screens.CreateDictionaryScreen
+import com.alex.che.memorize.ui.theme.MemorizeTheme
 
-class CreateDictionaryActivity : AppCompatActivity() {
-
-    private val memorizeDatabase: MemorizeDatabase by inject()
+class CreateDictionaryActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_create_dictionary)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-        val backBtn: Button = findViewById(R.id.back_btn)
-        backBtn.setOnClickListener {
-            backToMain()
+        setContent {
+            MemorizeTheme(
+                darkTheme = isSystemInDarkTheme()
+            ) {
+                Surface {
+                    CreateDictionaryScreen(
+                        onNavigateBack = { finish() }
+                    )
+                }
+            }
         }
-
-        val saveDictionaryBtn: Button = findViewById(R.id.save_dictionary_btn)
-        saveDictionaryBtn.setOnClickListener {
-            val newDictionaryName: TextView = findViewById(R.id.new_dictionary_name)
-            createDictionary(newDictionaryName.text.trim().toString())
-        }
-    }
-
-    private fun createDictionary(name: String) {
-        lifecycleScope.launch {
-            memorizeDatabase.dictionaryDao.insertDictionary(
-                Dictionary(
-                    null,
-                    name,
-                    LocalDateTime.now()
-                )
-            )
-            val intent = Intent(this@CreateDictionaryActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
-
-    private fun backToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }
