@@ -2,6 +2,7 @@ package com.alex.che.memorize
 
 import android.app.Application
 import androidx.room.Room
+import com.alex.che.memorize.di.viewModelModule
 import com.alex.che.memorize.repository.MemorizeDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,6 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.fragment.koin.fragmentFactory
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.koin.ksp.generated.defaultModule
 
 class App : Application() {
     private val DATABASE_NAME = "memorize"
@@ -31,7 +31,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(appModule, defaultModule)
+            modules(appModule, viewModelModule)
             fragmentFactory()
         }
     }
