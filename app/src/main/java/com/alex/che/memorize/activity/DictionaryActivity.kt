@@ -2,81 +2,67 @@ package com.alex.che.memorize.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Surface
 import androidx.lifecycle.lifecycleScope
 import com.alex.che.memorize.MainActivity
-import com.alex.che.memorize.R
 import com.alex.che.memorize.domain.CsvService
 import com.alex.che.memorize.repository.MemorizeDatabase
+import com.alex.che.memorize.ui.screens.DictionaryScreen
+import com.alex.che.memorize.ui.theme.MemorizeTheme
+import com.alex.che.memorize.viewmodel.DictionaryViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.system.exitProcess
 
-class DictionaryActivity : AppCompatActivity() {
+class DictionaryActivity : ComponentActivity() {
 
     private val memorizeDatabase: MemorizeDatabase by inject()
     private val csvService: CsvService by inject()
     private var dictionaryId: Int = -1
-    private val TAG: String = "Dictionary"
+    private var viewModel: DictionaryViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_dictionary)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        val toolbar: Toolbar = findViewById(R.id.dictionary_toolbar)
-        setSupportActionBar(toolbar)
 
         dictionaryId = intent.getIntExtra("SELECTED_DICTIONARY_ID", -1)
 
-        val trainWordsBtn: Button = findViewById(R.id.train_words_btn)
-        trainWordsBtn.setOnClickListener {
-            trainWords()
+        if (dictionaryId == -1) {
+            Toast.makeText(this, "Invalid dictionary ID", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
 
-        val backToDictionariesBtn: ImageButton = findViewById(R.id.back_to_dictionaries_btn)!!
-        backToDictionariesBtn.setOnClickListener {
-            backToDictionaries()
+        setContent {
+            MemorizeTheme(
+                darkTheme = isSystemInDarkTheme()
+            ) {
+                Surface {
+                    viewModel = koinViewModel<DictionaryViewModel>(parameters = { parametersOf(dictionaryId) })
+                    DictionaryScreen(
+                        dictionaryId = dictionaryId,
+                        viewModel = viewModel!!,
+                        onNavigateBack = { backToMain() },
+                        onAddWord = { addWord() },
+                        onTrainWords = { trainWords() },
+                        onTrainDifficultWords = { trainDifficultWords() },
+                        onExportCsv = { exportDictionary() },
+                        onImportCsv = { openDocumentPicker() },
+                        onDeleteDictionary = { deleteDictionary() }
+                    )
+                }
+            }
         }
-
-        val trainDiffWordsBtn: Button = findViewById(R.id.train_diff_words_btn)
-        trainDiffWordsBtn.setOnClickListener {
-            trainDifficultWords()
-        }
-
-        refreshWordsList()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.add_new_word -> addWord()
-            R.id.import_from_csv -> import()
-            R.id.delete_dictionary -> deleteDictionary()
-            R.id.export_to_csv -> exportDictionary()
-            R.id.exit -> exit()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.dictionary_menu, menu)
-        return true
     }
 
     private fun exit() {
@@ -86,25 +72,46 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun exportDictionary() {
         lifecycleScope.launch {
-            val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
-            csvService.export(dictionaryId, dictionary.name)
-            Toast.makeText(this@DictionaryActivity, "Export finished.", Toast.LENGTH_SHORT).show()
+            try {
+                val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
+                csvService.export(dictionaryId, dictionary.name)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@DictionaryActivity, "Export finished.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@DictionaryActivity, "Export failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
     private fun deleteDictionary() {
         lifecycleScope.launch {
-            memorizeDatabase.dictionaryDao.deleteDictionary(dictionaryId)
-            val intent = Intent(this@DictionaryActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            try {
+                memorizeDatabase.dictionaryDao.deleteDictionary(dictionaryId)
+                val intent = Intent(this@DictionaryActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            } catch (e: Exception) {
+                Toast.makeText(this@DictionaryActivity, "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun addWord() {
         val intent = Intent(this, AddWordActivity::class.java)
         intent.putExtra("SELECTED_DICTIONARY_ID", dictionaryId)
-        startActivity(intent)
+        addWordLauncher.launch(intent)
+    }
+
+    private val addWordLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            viewModel?.refresh()
+        }
     }
 
     private fun trainWords() {
@@ -123,15 +130,6 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun import() {
         openDocumentPicker()
-        refreshWordsList()
-    }
-
-    private fun refreshWordsList() {
-        val wordsCountTv: TextView = findViewById(R.id.words_count)
-        lifecycleScope.launch {
-            val wordsInDictionary = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
-            wordsCountTv.text = wordsInDictionary?.count().toString()
-        }
     }
 
     val importFromCsvResult =
@@ -140,9 +138,13 @@ class DictionaryActivity : AppCompatActivity() {
         ) { result ->
             if (result != null) {
                 lifecycleScope.launch {
-                    csvService.import(result, dictionaryId, this@DictionaryActivity)
-                    Toast.makeText(this@DictionaryActivity, "Import finished.", Toast.LENGTH_SHORT).show()
-                    refreshWordsList()
+                    try {
+                        csvService.import(result, dictionaryId, this@DictionaryActivity)
+                        Toast.makeText(this@DictionaryActivity, "Import finished.", Toast.LENGTH_SHORT).show()
+                        viewModel?.refresh()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@DictionaryActivity, "Import failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -151,14 +153,9 @@ class DictionaryActivity : AppCompatActivity() {
         importFromCsvResult.launch("*/*")
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "DictionaryActivity: onResume()")
-        refreshWordsList()
-    }
-
-    private fun backToDictionaries() {
+    private fun backToMain() {
         val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
