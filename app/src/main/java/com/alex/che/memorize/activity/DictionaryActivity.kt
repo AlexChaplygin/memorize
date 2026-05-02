@@ -86,9 +86,12 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun exportDictionary() {
         lifecycleScope.launch {
-            val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
-            csvService.export(dictionaryId, dictionary.name)
-            Toast.makeText(this@DictionaryActivity, "Export finished.", Toast.LENGTH_SHORT).show()
+            try {
+                val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
+                exportToCsvResult.launch("${dictionary.name}.csv")
+            } catch (e: Exception) {
+                Toast.makeText(this@DictionaryActivity, "Export failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -147,6 +150,23 @@ class DictionaryActivity : AppCompatActivity() {
                     csvService.import(result, dictionaryId, this@DictionaryActivity)
                     Toast.makeText(this@DictionaryActivity, "Import finished.", Toast.LENGTH_SHORT).show()
                     refreshWordsList()
+                }
+            }
+        }
+
+    val exportToCsvResult =
+        registerForActivityResult(
+            ActivityResultContracts.CreateDocument("text/csv")
+        ) { uri ->
+            if (uri != null) {
+                lifecycleScope.launch {
+                    try {
+                        val dictionary = memorizeDatabase.dictionaryDao.findDictionaryById(dictionaryId)
+                        csvService.export(dictionaryId, uri, this@DictionaryActivity)
+                        Toast.makeText(this@DictionaryActivity, "Export finished.", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@DictionaryActivity, "Export failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

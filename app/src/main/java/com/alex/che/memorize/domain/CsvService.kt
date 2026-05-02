@@ -3,8 +3,6 @@ package com.alex.che.memorize.domain
 import android.content.ContentResolver
 import android.content.ContextWrapper
 import android.net.Uri
-import android.os.Environment
-import android.os.Environment.getExternalStoragePublicDirectory
 import com.alex.che.memorize.converter.WordConverter
 import com.alex.che.memorize.dto.WordCsvDto
 import com.alex.che.memorize.repository.MemorizeDatabase
@@ -12,8 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Single
-import java.io.File
-import java.io.FileOutputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
 
@@ -54,10 +50,11 @@ class CsvService(
             }.toList()
     }
 
-    suspend fun export(dictionaryId: Int, name: String) = withContext(Dispatchers.IO) {
-        val folder = getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        val file = File(folder, "$name.csv")
-        FileOutputStream(file).writeCsv(dictionaryId)
+    suspend fun export(dictionaryId: Int, uri: Uri, context: ContextWrapper) = withContext(Dispatchers.IO) {
+        val resolver: ContentResolver = context.contentResolver
+        resolver.openOutputStream(uri)?.use { outputStream ->
+            outputStream.writeCsv(dictionaryId)
+        } ?: throw IllegalStateException("Could not open output stream for $uri")
     }
 
     private suspend fun OutputStream.writeCsv(dictionaryId: Int) {
