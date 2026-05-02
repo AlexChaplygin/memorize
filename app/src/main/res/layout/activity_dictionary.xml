@@ -61,6 +61,20 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:text="Train" />
 
+        <TextView
+            android:id="@+id/diff_words_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/transparent"
+            android:text=""
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_editor_absoluteX="24dp"
+            app:layout_editor_absoluteY="151dp" />
+
         <Button
             android:id="@+id/train_diff_words_btn"
             android:layout_width="wrap_content"

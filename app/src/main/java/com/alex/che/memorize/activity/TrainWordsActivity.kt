@@ -98,7 +98,7 @@ class TrainWordsActivity : AppCompatActivity() {
         } else {
             memorizeDatabase.wordDao.loadByDictId(dictionaryId)
         }
-        if (words.isEmpty()) {
+        if (words.isNullOrEmpty()) {
             runOnUiThread {
                 Toast.makeText(this@TrainWordsActivity, "No words in dictionary.", Toast.LENGTH_SHORT).show()
             }

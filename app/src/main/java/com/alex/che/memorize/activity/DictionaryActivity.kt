@@ -128,9 +128,13 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun refreshWordsList() {
         val wordsCountTv: TextView = findViewById(R.id.words_count)
+        val diffWordsCountTv: TextView = findViewById(R.id.diff_words_count)
         lifecycleScope.launch {
             val wordsInDictionary = memorizeDatabase.wordDao.loadWordsByDictId(dictionaryId)
             wordsCountTv.text = wordsInDictionary?.count().toString()
+
+            val diffWordsInDictionary = memorizeDatabase.wordDao.loadDifficultWordsByDictId(dictionaryId)
+            diffWordsCountTv.text = diffWordsInDictionary?.count().toString()
         }
     }
 

@@ -31,7 +31,7 @@ interface WordDao {
     suspend fun loadByDictId(dictId: Int): List<Word>
 
     @Query("SELECT * FROM word where dictionaryId = :dictId and isDifficult = true order by checkDate asc")
-    suspend fun loadDifficultWordsByDictId(dictId: Int): List<Word>
+    suspend fun loadDifficultWordsByDictId(dictId: Int): List<Word>?
 
     @Query("SELECT * FROM word where id in (:ids)")
     suspend fun loadWords(ids: List<Int>): List<Word>
