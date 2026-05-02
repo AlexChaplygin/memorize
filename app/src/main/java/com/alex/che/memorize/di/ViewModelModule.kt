@@ -3,6 +3,7 @@ package com.alex.che.memorize.di
 import com.alex.che.memorize.viewmodel.AddWordViewModel
 import com.alex.che.memorize.viewmodel.CreateDictionaryViewModel
 import com.alex.che.memorize.viewmodel.DictionaryViewModel
+import com.alex.che.memorize.viewmodel.TrainViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -10,4 +11,5 @@ val viewModelModule = module {
     viewModelOf(::AddWordViewModel)
     viewModelOf(::CreateDictionaryViewModel)
     viewModelOf(::DictionaryViewModel)
+    viewModelOf(::TrainViewModel)
 }

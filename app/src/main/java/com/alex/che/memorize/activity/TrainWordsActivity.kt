@@ -3,20 +3,26 @@ package com.alex.che.memorize.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import com.alex.che.memorize.R
 import com.alex.che.memorize.converter.WordConverter
 import com.alex.che.memorize.dto.WordDto
 import com.alex.che.memorize.fragment.CheckWordFragment
 import com.alex.che.memorize.repository.MemorizeDatabase
-import kotlinx.coroutines.launch
+import com.alex.che.memorize.ui.screens.TrainScreen
+import com.alex.che.memorize.ui.theme.MemorizeTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.util.Stack
@@ -36,56 +42,41 @@ class TrainWordsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         wordsStack = Stack()
-        setContentView(R.layout.activity_train_words)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
         dictionaryId = intent.getIntExtra("SELECTED_DICTIONARY_ID", -1)
         val trainDifficultWords = intent.getBooleanExtra("TRAIN_DIFFICULT_WORDS", false)
 
-        val closeWordsTrainingBtn: ImageButton = findViewById(R.id.close_words_training_btn)
-        closeWordsTrainingBtn.setOnClickListener {
-            goToDictionary()
-        }
-
-        lifecycleScope.launch {
-            wordsAmount = getWordsToTrain(trainDifficultWords)
-            if (wordsAmount > 0) {
-                setNewFragment()
-            } else {
-                finish()
+        setContent {
+            MemorizeTheme {
+                val gradientBrush = Brush.linearGradient(
+                    0.0f to Color(0xFF2196F3),
+                    1.0f to Color(0xFFF22828)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(gradientBrush)
+                ) {
+                    TrainScreen(
+                        dictionaryId = dictionaryId,
+                        trainDifficultWords = trainDifficultWords,
+                        onNavigateBack = {
+                            goToDictionary()
+                        }
+                    )
+                }
             }
         }
-    }
 
-    fun setNewFragment() {
-        if (!wordsStack.empty()) {
-            val word = wordsStack.pop()
-            val bundle = Bundle()
-            bundle.putSerializable("word", word)
-            bundle.putInt("current_count", wordsAmount - wordsStack.size)
-            bundle.putInt("amount_of_words", wordsAmount)
-            val ft = supportFragmentManager.beginTransaction()
-            ft.replace(
-                R.id.layout_to_train_words_fragment,
-                CheckWordFragment::class.java,
-                bundle,
-                "TAG"
-            )
-            ft.addToBackStack(null)
-            ft.commit()
-        } else {
-            val intent = Intent(this, DictionaryActivity::class.java)
-            intent.putExtra("SELECTED_DICTIONARY_ID", dictionaryId)
-            startActivity(intent)
-            finish()
+        // Load words in background (kept for backward compatibility)
+        CoroutineScope(Dispatchers.Main).launch {
+            wordsAmount = getWordsToTrain(trainDifficultWords)
+            Log.i("TrainWordsActivity", "Loaded $wordsAmount words for training")
         }
     }
 
     private fun goToDictionary() {
-        val intent = Intent(this, DictionaryActivity::class.java)
+        val intent = Intent(this@TrainWordsActivity, DictionaryActivity::class.java)
         intent.putExtra("SELECTED_DICTIONARY_ID", dictionaryId)
         startActivity(intent)
         finish()
@@ -113,4 +104,27 @@ class TrainWordsActivity : AppCompatActivity() {
         return@withContext takenList.size
     }
 
+    // Kept for backward compatibility with CheckWordFragment (old XML-based flow)
+    // Not used in Compose-based flow
+    @Deprecated("Old Fragment-based flow, use Compose TrainScreen instead")
+    fun setNewFragment() {
+        if (!wordsStack.empty()) {
+            val word = wordsStack.pop()
+            val bundle = Bundle()
+            bundle.putSerializable("word", word)
+            bundle.putInt("current_count", wordsAmount - wordsStack.size)
+            bundle.putInt("amount_of_words", wordsAmount)
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(
+                R.id.layout_to_train_words_fragment,
+                CheckWordFragment::class.java,
+                bundle,
+                "TAG"
+            )
+            ft.addToBackStack(null)
+            ft.commit()
+        } else {
+            goToDictionary()
+        }
+    }
 }
